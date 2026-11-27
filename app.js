@@ -84,19 +84,58 @@ const HEARTHSTONE_CLASSES = ["Chevalier de la mort", "Chasseur de démons", "Dru
 function loadSupabase(){
   if(supabaseClient)return Promise.resolve(supabaseClient);
   if(supabaseReadyPromise)return supabaseReadyPromise;
-  supabaseReadyPromise=new Promise((resolve,reject)=>{
-    const initialise=()=>{
-      if(!window.supabase?.createClient){reject(new Error("La bibliothèque Supabase n'a pas pu être chargée."));return;}
-      supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-      resolve(supabaseClient);
-    };
-    if(window.supabase?.createClient){initialise();return;}
-    const script=document.createElement("script");
-    script.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
-    script.onload=initialise;
-    script.onerror=()=>reject(new Error("Impossible de charger la connexion à la bibliothèque de decks."));
-    document.head.appendChild(script);
-  }).catch(error=>{supabaseReadyPromise=null;throw error;});
+
+  // Appels REST directs à Supabase : aucune bibliothèque JavaScript externe
+  // n'est chargée depuis un CDN dans le panneau Twitch.
+  const request = async (table, {method="GET", query="", body=null, prefer=""}={}) => {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/${encodeURIComponent(table)}${query ? `?${query}` : ""}`, {
+      method,
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+        "Content-Type": "application/json",
+        ...(prefer ? {"Prefer": prefer} : {})
+      },
+      ...(body !== null ? {body: JSON.stringify(body)} : {})
+    });
+    if(!response.ok){
+      let detail = "";
+      try{detail = await response.text();}catch{}
+      throw new Error(detail || `Erreur Supabase (${response.status})`);
+    }
+    if(response.status === 204)return null;
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+  };
+
+  const client = {
+    from(table){
+      let query = "";
+      const builder = {
+        select(columns){
+          query = `select=${encodeURIComponent(columns)}`;
+          return builder;
+        },
+        eq(column, value){
+          query += `${query ? "&" : ""}${encodeURIComponent(column)}=eq.${encodeURIComponent(value)}`;
+          return builder;
+        },
+        order(column, {ascending=true}={}){
+          query += `${query ? "&" : ""}order=${encodeURIComponent(column)}.${ascending ? "asc" : "desc"}`;
+          return request(table, {query}).then(data => ({data, error:null})).catch(error => ({data:null, error}));
+        },
+        insert(payload){
+          return request(table, {method:"POST", body:payload, prefer:"return=minimal"})
+            .then(() => ({data:null, error:null}))
+            .catch(error => ({data:null, error}));
+        }
+      };
+      return builder;
+    }
+  };
+
+  supabaseClient = client;
+  supabaseReadyPromise = Promise.resolve(client);
   return supabaseReadyPromise;
 }
 
