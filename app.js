@@ -20,6 +20,7 @@ let communityDecksLoaded = false;
 let communityDecksLoading = false;
 let communityDecksError = "";
 let deckClassFilter = "Toutes";
+let deckAuthorFilter = "Tous";
 let deckSearchTerm = "";
 let deckSubmitMessage = "";
 let deckSubmitMessageIsError = false;
@@ -121,15 +122,59 @@ async function refreshCommunityDecks(force=false){
   }
 }
 
+const CLASS_BADGES = {
+  "Chevalier de la mort": {symbol:"☠", tone:"#69b8d8"},
+  "Chasseur de démons": {symbol:"◈", tone:"#a66be0"},
+  "Druide": {symbol:"❧", tone:"#d28a42"},
+  "Chasseur": {symbol:"➶", tone:"#75b94b"},
+  "Mage": {symbol:"✦", tone:"#62a9e8"},
+  "Paladin": {symbol:"✧", tone:"#e6c65b"},
+  "Prêtre": {symbol:"✚", tone:"#e7e1d2"},
+  "Voleur": {symbol:"⚔", tone:"#a9b2bd"},
+  "Chaman": {symbol:"ϟ", tone:"#5b91e8"},
+  "Démoniste": {symbol:"♨", tone:"#b477df"},
+  "Guerrier": {symbol:"⚒", tone:"#d68b4c"}
+};
+function classBadge(heroClass, size=42){
+  const badge=CLASS_BADGES[heroClass]||{symbol:"✦",tone:"#d9ad4b"};
+  return `<span aria-label="${escapeHTML(heroClass||"Classe inconnue")}" title="${escapeHTML(heroClass||"Classe inconnue")}" style="width:${size}px;height:${size}px;flex:0 0 ${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;box-sizing:border-box;border:2px solid ${badge.tone};background:radial-gradient(circle at 35% 28%,${badge.tone}55,#101d36 72%);color:#fff3c6;text-shadow:0 2px 5px #000;font-size:${Math.round(size*.57)}px;box-shadow:0 0 12px ${badge.tone}55">${badge.symbol}</span>`;
+}
+function formatDeckDate(value){
+  if(!value)return "Date inconnue";
+  const date=new Date(value);
+  if(Number.isNaN(date.getTime()))return "Date inconnue";
+  const today=new Date();
+  const yesterday=new Date();yesterday.setDate(today.getDate()-1);
+  const sameDay=(a,b)=>a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+  const day=sameDay(date,today)?"Aujourd'hui":sameDay(date,yesterday)?"Hier":new Intl.DateTimeFormat("fr-FR",{weekday:"long",day:"numeric",month:"short"}).format(date);
+  return day.charAt(0).toLocaleUpperCase("fr")+day.slice(1);
+}
 function renderDecks(){
-  const localCards=(data.decks||[]).map((item,i)=>`<article class="card"><div class="row"><h3>${escapeHTML(item.name||`Deck ${i+1}`)}</h3><span class="pill">DECK JORDY</span></div>${item.note?`<div class="muted">${escapeHTML(item.note)}</div>`:""}<div class="deck-code" id="local-deck-${i}">${escapeHTML(item.code||"Code non renseigné")}</div>${item.code?`<button class="action" type="button" data-copy="local-deck-${i}">▣ Copier le code</button>`:""}${item.url?` ${linkButton(item.url,"Voir le deck ↗",true)}`:""}</article>`).join("");
+  const localCards=(data.decks||[]).map((item,i)=>`<article class="card"><div style="display:flex;align-items:center;gap:12px">${classBadge(item.hero_class||"",42)}<div style="flex:1;min-width:0"><h3>${escapeHTML(item.name||`Deck ${i+1}`)}</h3><span class="muted">${escapeHTML(item.hero_class||"Deck de Jordy")}</span></div><span class="pill">DECK JORDY</span></div>${item.note?`<div class="muted" style="margin-top:10px">${escapeHTML(item.note)}</div>`:""}<div class="deck-code" id="local-deck-${i}">${escapeHTML(item.code||"Code non renseigné")}</div>${item.code?`<button class="action" type="button" data-copy="local-deck-${i}">▣ Copier le code</button>`:""}${item.url?` ${linkButton(item.url,"Voir le deck ↗",true)}`:""}</article>`).join("");
   const search=deckSearchTerm.trim().toLocaleLowerCase("fr");
+  const authors=[...new Set(communityDecks.map(item=>String(item.author_name||"Joueur").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"fr"));
   const filtered=communityDecks.filter(item=>{
     const matchesClass=deckClassFilter==="Toutes"||item.hero_class===deckClassFilter;
+    const matchesAuthor=deckAuthorFilter==="Tous"||item.author_name===deckAuthorFilter;
     const haystack=[item.deck_name,item.author_name,item.hero_class,item.description].join(" ").toLocaleLowerCase("fr");
-    return matchesClass&&(!search||haystack.includes(search));
+    return matchesClass&&matchesAuthor&&(!search||haystack.includes(search));
   });
-  const communityCards=filtered.map((item,i)=>`<article class="card"><div class="row" style="align-items:flex-start;gap:10px;flex-wrap:wrap"><h3>${escapeHTML(item.deck_name)}</h3><span class="pill">${escapeHTML(item.hero_class)}</span></div><p class="muted" style="margin:6px 0 10px">Proposé par <strong>${escapeHTML(item.author_name)}</strong> · Format Standard</p>${item.description?`<p class="muted">${escapeHTML(item.description)}</p>`:""}<div class="deck-code" id="community-deck-${i}">${escapeHTML(item.deck_code)}</div><button class="action" type="button" data-copy="community-deck-${i}">▣ Copier le code</button></article>`).join("");
+  const authorButtons=[`<button type="button" data-author-filter="Tous" aria-pressed="${deckAuthorFilter==="Tous"}" style="min-width:76px;padding:10px 13px;border-radius:14px;border:1px solid ${deckAuthorFilter==="Tous"?"#e9bd4d":"#71809a"};background:${deckAuthorFilter==="Tous"?"linear-gradient(135deg,#314f78,#132747)":"#172943"};color:#fff;cursor:pointer;font-weight:700">Tous <span style="display:block;font-size:11px;opacity:.8">${communityDecks.length}</span></button>`,...authors.map(author=>{
+    const initials=author.split(/\s+/).map(part=>part[0]).join("").slice(0,2).toLocaleUpperCase("fr");
+    const count=communityDecks.filter(item=>item.author_name===author).length;
+    const active=deckAuthorFilter===author;
+    return `<button type="button" data-author-filter="${escapeHTML(author)}" aria-pressed="${active}" style="min-width:76px;padding:8px 12px;border-radius:14px;border:1px solid ${active?"#e9bd4d":"#71809a"};background:${active?"linear-gradient(135deg,#314f78,#132747)":"#172943"};color:#fff;cursor:pointer"><span style="display:inline-flex;width:34px;height:34px;border-radius:50%;align-items:center;justify-content:center;background:linear-gradient(135deg,#d8ad43,#75501d);color:#101d36;font-weight:900;margin-bottom:4px">${escapeHTML(initials)}</span><span style="display:block;max-width:105px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">${escapeHTML(author)}</span><span style="font-size:10px;opacity:.75">${count} deck${count>1?"s":""}</span></button>`;
+  })].join("");
+  const classButtons=[`<button type="button" data-class-filter="Toutes" aria-label="Toutes les classes" title="Toutes les classes" aria-pressed="${deckClassFilter==="Toutes"}" style="width:48px;height:48px;border-radius:13px;border:1px solid ${deckClassFilter==="Toutes"?"#e9bd4d":"#71809a"};background:${deckClassFilter==="Toutes"?"#314f78":"#172943"};color:#f4d16b;font-size:24px;cursor:pointer">✥</button>`,...HEARTHSTONE_CLASSES.map(heroClass=>{
+    const b=CLASS_BADGES[heroClass];const active=deckClassFilter===heroClass;
+    return `<button type="button" data-class-filter="${escapeHTML(heroClass)}" aria-label="${escapeHTML(heroClass)}" title="${escapeHTML(heroClass)}" aria-pressed="${active}" style="width:48px;height:48px;border-radius:13px;border:1px solid ${active?"#e9bd4d":"#71809a"};background:${active?"#314f78":"#172943"};color:${b.tone};font-size:26px;text-shadow:0 2px 5px #000;cursor:pointer">${b.symbol}</button>`;
+  })].join("");
+  const groups=new Map();
+  filtered.forEach(item=>{const key=formatDeckDate(item.created_at);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(item);});
+  const communityCards=[...groups.entries()].map(([day,items])=>`<section style="margin-top:18px"><h3 class="subheading" style="display:flex;align-items:center;gap:12px">${escapeHTML(day)} <span class="muted" style="font-size:.78em;font-weight:400">${items.length} deck${items.length>1?"s":""}</span></h3><div class="list">${items.map((item,i)=>{
+    const id=`community-deck-${String(item.id||i).replace(/[^a-zA-Z0-9_-]/g,"")}`;
+    return `<article class="card" style="padding:14px"><div style="display:flex;align-items:center;gap:12px"><div style="flex:0 0 auto">${classBadge(item.hero_class,48)}</div><div style="flex:1;min-width:0"><h3 style="margin:0 0 4px;overflow-wrap:anywhere">${escapeHTML(item.deck_name)}</h3><div class="muted" style="font-size:.9em">${escapeHTML(item.hero_class)} · ${escapeHTML(item.author_name)}</div></div><span class="pill" style="white-space:nowrap">STANDARD</span></div><details style="margin-top:12px;border-top:1px solid #71809a55;padding-top:10px"><summary style="cursor:pointer;color:#f1c65c;font-weight:700">Voir le deck et son code</summary>${item.description?`<p class="muted" style="margin:10px 0">${escapeHTML(item.description)}</p>`:""}<div class="deck-code" id="${id}" style="overflow-wrap:anywhere;margin:10px 0">${escapeHTML(item.deck_code)}</div><button class="action" type="button" data-copy="${id}">▣ Copier le code</button></details></article>`;
+  }).join("")}</div></section>`).join("");
   const classOptions=["Toutes",...HEARTHSTONE_CLASSES].map(name=>`<option value="${escapeHTML(name)}" ${deckClassFilter===name?"selected":""}>${escapeHTML(name)}</option>`).join("");
   const loadingNote=communityDecksLoading?`<p class="muted">🌿 Ouverture de la bibliothèque de la jungle…</p>`:"";
   const errorNote=communityDecksError?`<p class="muted" role="status">${escapeHTML(communityDecksError)} <button type="button" class="action secondary" data-reload-decks>Réessayer</button></p>`:"";
@@ -145,9 +190,9 @@ function renderDecks(){
       <label aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden">Ne pas remplir<input name="website" tabindex="-1" autocomplete="off"></label>
       <button class="action" type="submit" id="deck-submit-button">🌿 Envoyer mon deck</button>${submitNote}
     </form><p class="muted" style="font-size:0.88em;margin-top:12px">Aucun compte à créer. Les propositions sont vérifiées avant publication. Format Standard uniquement.</p></article>`+
-    (localCards?`<h3 class="subheading">Les decks de Jordy</h3><div class="list">${localCards}</div>`:"")+ 
-    `<h3 class="subheading">Les decks de la communauté</h3><article class="card"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px"><label style="display:grid;gap:5px">Filtrer par classe<select id="deck-class-filter" style="width:100%;box-sizing:border-box;padding:10px;border-radius:9px">${classOptions}</select></label><label style="display:grid;gap:5px">Rechercher<input id="deck-search" value="${escapeHTML(deckSearchTerm)}" placeholder="Nom, pseudo, description…" style="width:100%;box-sizing:border-box;padding:10px;border-radius:9px"></label></div></article>`+
-    loadingNote+errorNote+(communityDecksLoading?"":communityCards?`<div class="list">${communityCards}</div>`:empty(communityDecksError?"":"Aucun deck validé pour le moment. Sois le premier à partager le tien !"));
+    (localCards?`<h3 class="subheading">Les decks de Jordy</h3><div class="list">${localCards}</div>`:"")+
+    `<h3 class="subheading">Les decks de la communauté</h3><article class="card" style="display:grid;gap:12px"><div><div class="muted" style="margin-bottom:8px">Filtrer par joueur</div><div style="display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px">${authorButtons}</div></div><div><div class="muted" style="margin-bottom:8px">Filtrer par classe</div><div style="display:flex;gap:8px;flex-wrap:wrap">${classButtons}</div></div><label style="display:grid;gap:5px">Rechercher un deck<input id="deck-search" value="${escapeHTML(deckSearchTerm)}" placeholder="Nom, pseudo, description…" style="width:100%;box-sizing:border-box;padding:10px;border-radius:9px"></label><div class="muted" style="font-size:.85em">${filtered.length} deck${filtered.length>1?"s":""} affiché${filtered.length>1?"s":""}</div></article>`+
+    loadingNote+errorNote+(communityDecksLoading?"":communityCards?communityCards:empty(communityDecksError?"":"Aucun deck validé pour le moment. Sois le premier à partager le tien !"));
 }
 function renderTournaments(){
   const cards=(data.tournaments||[]).map(item=>`<article class="card"><div class="row"><h3>${escapeHTML(item.name||"Tournoi")}</h3><span class="tag">${escapeHTML(item.date||"")}</span></div>${item.detail?`<p class="muted">${escapeHTML(item.detail)}</p>`:""}${item.url?`<p>${linkButton(item.url,"Informations / inscriptions ↗")}</p>`:""}</article>`).join("");
@@ -185,6 +230,10 @@ document.querySelector(".tabs").addEventListener("click",event=>{
   const button=event.target.closest("button[data-tab]");if(!button)return;currentTab=button.dataset.tab;render();if(currentTab==="decks")refreshCommunityDecks();
 });
 $("#content").addEventListener("click",async event=>{
+  const authorButton=event.target.closest("button[data-author-filter]");
+  if(authorButton){deckAuthorFilter=authorButton.dataset.authorFilter;render();return;}
+  const classButton=event.target.closest("button[data-class-filter]");
+  if(classButton){deckClassFilter=classButton.dataset.classFilter;render();return;}
   const button=event.target.closest("button[data-copy]");if(!button)return;
   const value=$("#"+CSS.escape(button.dataset.copy))?.textContent?.trim()||"";
   try{
@@ -225,12 +274,6 @@ $("#content").addEventListener("submit",async event=>{
   }
 });
 
-$("#content").addEventListener("change",event=>{
-  if(event.target.id==="deck-class-filter"){
-    deckClassFilter=event.target.value;
-    render();
-  }
-});
 $("#content").addEventListener("input",event=>{
   if(event.target.id==="deck-search"){
     const position=event.target.selectionStart;
