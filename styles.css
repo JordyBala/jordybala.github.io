@@ -240,3 +240,77 @@ h3 {
   border-radius: 10px;
   padding: 10px;
 }
+
+/* =====================================
+   KING OF THE JUNGLE - LETTRAGE 3D
+   ===================================== */
+
+/* Grand titre Ouisti'Team */
+h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-weight: 900;
+  color: #ffe89a;
+  text-shadow:
+    0 1px 0 #fff5c2,
+    0 2px 0 #e6b94b,
+    0 3px 0 #bd8424,
+    0 4px 0 #805019,
+    0 5px 8px #000,
+    0 0 14px #ffc94d;
+  letter-spacing: 1.5px;
+}
+
+/* Titres des rubriques */
+h2, .king-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-weight: 900;
+  color: #ffdf79;
+  text-shadow:
+    0 1px 0 #fff1b0,
+    0 2px 0 #d9a43b,
+    0 3px 0 #95611c,
+    0 4px 7px #000,
+    0 0 12px #f5bd42;
+}
+
+/* Titres des cartes */
+h3 {
+  font-family: 'Alegreya Sans SC', sans-serif;
+  font-weight: 900;
+  color: #fff0b0;
+  text-shadow:
+    0 1px 0 #d9a43b,
+    0 2px 3px #000,
+    0 0 8px #d9a43b;
+}
+
+/* Onglets de navigation */
+.tab {
+  font-family: 'Alegreya Sans SC', sans-serif;
+  font-weight: 900;
+  color: #fff0bd;
+  letter-spacing: 1.5px;
+  text-shadow:
+    0 1px 0 #c58b30,
+    0 2px 4px #000,
+    0 0 7px #d9a43b;
+  transition: all .2s ease;
+}
+
+/* Onglet actif */
+.tab.active {
+  color: #fff5c7;
+  text-shadow:
+    0 1px 0 #fff,
+    0 2px 0 #e6b94b,
+    0 3px 7px #8a5716,
+    0 0 12px #ffd45c;
+}
+
+/* Petit texte supérieur */
+.eyebrow {
+  color: #ffd45c;
+  text-shadow:
+    0 1px 2px #000,
+    0 0 8px #ffbd35;
+}
