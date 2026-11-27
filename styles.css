@@ -1,3 +1,5 @@
+/* POLICES - IDENTITE TEMPLE ANCESTRAL */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Alegreya+Sans+SC:wght@700;800;900&display=swap');
 *{box-sizing:border-box}
 
 :root{
@@ -185,9 +187,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold2);outline-offs
   position: relative;
   z-index: 1;
 }
-
-/* POLICES - IDENTITE TEMPLE ANCESTRAL */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Alegreya+Sans+SC:wght@700;800;900&display=swap');
 
 /* Grand titre */
 h1 {
