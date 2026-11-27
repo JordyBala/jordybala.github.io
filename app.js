@@ -123,21 +123,21 @@ async function refreshCommunityDecks(force=false){
 }
 
 const CLASS_BADGES = {
-  "Chevalier de la mort": {symbol:"☠", tone:"#69b8d8"},
-  "Chasseur de démons": {symbol:"◈", tone:"#a66be0"},
-  "Druide": {symbol:"❧", tone:"#d28a42"},
-  "Chasseur": {symbol:"➶", tone:"#75b94b"},
-  "Mage": {symbol:"✦", tone:"#62a9e8"},
-  "Paladin": {symbol:"✧", tone:"#e6c65b"},
-  "Prêtre": {symbol:"✚", tone:"#e7e1d2"},
-  "Voleur": {symbol:"⚔", tone:"#a9b2bd"},
-  "Chaman": {symbol:"ϟ", tone:"#5b91e8"},
-  "Démoniste": {symbol:"♨", tone:"#b477df"},
-  "Guerrier": {symbol:"⚒", tone:"#d68b4c"}
+  "Chevalier de la mort": {image:"assets/class-chevalier-de-la-mort.png", tone:"#69b8e8"},
+  "Chasseur de démons": {image:"assets/class-chasseur-de-demons.png", tone:"#69c52e"},
+  "Druide": {image:"assets/class-druide.png", tone:"#b27a42"},
+  "Chasseur": {image:"assets/class-chasseur.png", tone:"#68bd3b"},
+  "Mage": {image:"assets/class-mage.png", tone:"#3199ff"},
+  "Paladin": {image:"assets/class-paladin.png", tone:"#e6b83e"},
+  "Prêtre": {image:"assets/class-pretre.png", tone:"#e7e1d2"},
+  "Voleur": {image:"assets/class-voleur.png", tone:"#a66be0"},
+  "Chaman": {image:"assets/class-chaman.png", tone:"#36c9e8"},
+  "Démoniste": {image:"assets/class-demoniste.png", tone:"#a45be8"},
+  "Guerrier": {image:"assets/class-guerrier.png", tone:"#df6541"}
 };
 function classBadge(heroClass, size=42){
-  const badge=CLASS_BADGES[heroClass]||{symbol:"✦",tone:"#d9ad4b"};
-  return `<span aria-label="${escapeHTML(heroClass||"Classe inconnue")}" title="${escapeHTML(heroClass||"Classe inconnue")}" style="width:${size}px;height:${size}px;flex:0 0 ${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;box-sizing:border-box;border:2px solid ${badge.tone};background:radial-gradient(circle at 35% 28%,${badge.tone}55,#101d36 72%);color:#fff3c6;text-shadow:0 2px 5px #000;font-size:${Math.round(size*.57)}px;box-shadow:0 0 12px ${badge.tone}55">${badge.symbol}</span>`;
+  const badge=CLASS_BADGES[heroClass]||{image:"assets/class-mage.png",tone:"#d9ad4b"};
+  return `<img src="${badge.image}" alt="${escapeHTML(heroClass||"Classe inconnue")}" title="${escapeHTML(heroClass||"Classe inconnue")}" width="${size}" height="${size}" loading="lazy" style="width:${size}px;height:${size}px;flex:0 0 ${size}px;object-fit:contain;border-radius:50%;filter:drop-shadow(0 0 5px ${badge.tone}88)">`;
 }
 function formatDeckDate(value){
   if(!value)return "Date inconnue";
@@ -165,9 +165,9 @@ function renderDecks(){
     const active=deckAuthorFilter===author;
     return `<button type="button" data-author-filter="${escapeHTML(author)}" aria-pressed="${active}" style="min-width:76px;padding:8px 12px;border-radius:14px;border:1px solid ${active?"#e9bd4d":"#71809a"};background:${active?"linear-gradient(135deg,#314f78,#132747)":"#172943"};color:#fff;cursor:pointer"><span style="display:inline-flex;width:34px;height:34px;border-radius:50%;align-items:center;justify-content:center;background:linear-gradient(135deg,#d8ad43,#75501d);color:#101d36;font-weight:900;margin-bottom:4px">${escapeHTML(initials)}</span><span style="display:block;max-width:105px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">${escapeHTML(author)}</span><span style="font-size:10px;opacity:.75">${count} deck${count>1?"s":""}</span></button>`;
   })].join("");
-  const classButtons=[`<button type="button" data-class-filter="Toutes" aria-label="Toutes les classes" title="Toutes les classes" aria-pressed="${deckClassFilter==="Toutes"}" style="width:48px;height:48px;border-radius:13px;border:1px solid ${deckClassFilter==="Toutes"?"#e9bd4d":"#71809a"};background:${deckClassFilter==="Toutes"?"#314f78":"#172943"};color:#f4d16b;font-size:24px;cursor:pointer">✥</button>`,...HEARTHSTONE_CLASSES.map(heroClass=>{
+  const classButtons=[`<button type="button" data-class-filter="Toutes" aria-label="Toutes les classes" title="Toutes les classes" aria-pressed="${deckClassFilter==="Toutes"}" style="width:52px;height:52px;border-radius:13px;border:1px solid ${deckClassFilter==="Toutes"?"#e9bd4d":"#71809a"};background:${deckClassFilter==="Toutes"?"#314f78":"#172943"};color:#f4d16b;font-size:22px;cursor:pointer">✥</button>`,...HEARTHSTONE_CLASSES.map(heroClass=>{
     const b=CLASS_BADGES[heroClass];const active=deckClassFilter===heroClass;
-    return `<button type="button" data-class-filter="${escapeHTML(heroClass)}" aria-label="${escapeHTML(heroClass)}" title="${escapeHTML(heroClass)}" aria-pressed="${active}" style="width:48px;height:48px;border-radius:13px;border:1px solid ${active?"#e9bd4d":"#71809a"};background:${active?"#314f78":"#172943"};color:${b.tone};font-size:26px;text-shadow:0 2px 5px #000;cursor:pointer">${b.symbol}</button>`;
+    return `<button type="button" data-class-filter="${escapeHTML(heroClass)}" aria-label="${escapeHTML(heroClass)}" title="${escapeHTML(heroClass)}" aria-pressed="${active}" style="width:52px;height:52px;padding:3px;border-radius:13px;border:1px solid ${active?"#e9bd4d":"#71809a"};background:${active?"#314f78":"#172943"};cursor:pointer"><img src="${b.image}" alt="" width="44" height="44" loading="lazy" style="width:44px;height:44px;object-fit:contain"></button>`;
   })].join("");
   const groups=new Map();
   filtered.forEach(item=>{const key=formatDeckDate(item.created_at);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(item);});
