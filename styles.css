@@ -185,3 +185,59 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold2);outline-offs
   position: relative;
   z-index: 1;
 }
+
+/* POLICES - IDENTITE TEMPLE ANCESTRAL */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Alegreya+Sans+SC:wght@700;800;900&display=swap');
+
+/* Grand titre */
+h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-weight: 900;
+  color: #ffda75;
+  text-shadow: 0 2px 3px #6b3900,
+               0 0 12px #f5b83299;
+  letter-spacing: 1px;
+}
+
+/* Titres des sections */
+h2, .king-name {
+  font-family: 'Cinzel Decorative', serif;
+  color: #ffdc79;
+  text-shadow: 0 2px 5px #9b6100aa;
+}
+
+/* Navigation */
+.tab {
+  font-family: 'Alegreya Sans SC', sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff0bd;
+  letter-spacing: 1.2px;
+  text-shadow: 0 1px 4px #000;
+}
+
+.tab.active {
+  color: #ffe17b;
+  text-shadow: 0 0 9px #ffcf4d99;
+}
+
+/* Titres des cartes */
+h3 {
+  font-family: 'Alegreya Sans SC', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  color: #fff2ce;
+  text-shadow: 0 2px 4px #0009;
+}
+
+/* Protection de la lisibilité du bandeau */
+.brand {
+  background: linear-gradient(
+    90deg,
+    #07162bd9,
+    #10294a88,
+    #07162b99
+  );
+  border-radius: 10px;
+  padding: 10px;
+}
