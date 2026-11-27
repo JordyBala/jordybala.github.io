@@ -37,10 +37,33 @@ function renderLive(){
   const cards=(data.lives||[]).map(item=>`<article class="card"><div class="row"><h3>${escapeHTML(item.name)}</h3><span class="pill">COMMUNAUTÉ</span></div><div class="muted">${escapeHTML(item.game||"Hearthstone")}${item.note?` · ${escapeHTML(item.note)}`:""}</div>${item.url?`<p>${linkButton(item.url,"Voir la chaîne Twitch ↗")}</p>`:""}</article>`).join("");
   return heading("Les lives de la team","CHAÎNES")+`<article class="card featured"><div class="row"><div><span class="tag">LE CAMP DE BASE</span><h3 style="margin-top:8px">La jungle est ouverte !</h3><p class="muted">Suivez les lives, les decks et les événements de la Ouisti’Team.</p></div><div class="stat" aria-hidden="true">🐒</div></div></article>`+(cards?`<div class="list">${cards}</div>`:empty("Les chaînes de la team seront bientôt affichées."));
 }
+
 function renderPlanning(){
-  const cards=(data.schedule||[]).map(item=>`<article class="card"><div class="row"><h3>${escapeHTML(item.day||"Rendez-vous")}</h3><span class="tag">${escapeHTML(item.time||"")}</span></div><strong>${escapeHTML(item.title||"")}</strong>${item.detail?`<p class="muted">${escapeHTML(item.detail)}</p>`:""}</article>`).join("");
-  return heading("Le planning de la jungle","RENDEZ-VOUS")+(cards?`<div class="list">${cards}</div>`:empty("Le prochain planning sera publié ici. Les horaires seront mis à jour par Jordy."));
+  const affiche = "assets/Prog%202026%20Nov4VF.png";
+
+  return heading("Le planning de la jungle","PROGRAMME HEBDOMADAIRE")
+  + `<article class="card featured">
+      <div style="width:100%;text-align:center;">
+        <a href="${affiche}" target="_blank" rel="noopener noreferrer">
+          <img
+            src="${affiche}"
+            alt="Planning hebdomadaire de la Ouisti’Team"
+            loading="lazy"
+            style="width:100%;height:auto;max-width:1100px;border-radius:14px;border:1px solid #d9a43b;box-shadow:0 8px 24px #0008;"
+          >
+        </a>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+        <a class="action" href="${affiche}" target="_blank" rel="noopener noreferrer">
+          Agrandir le planning ↗
+        </a>
+        <a class="action secondary" href="${affiche}" download="planning-semaine.png">
+          Télécharger le planning ↓
+        </a>
+      </div>
+    </article>`;
 }
+
 function renderDecks(){
   const cards=(data.decks||[]).map((item,i)=>`<article class="card"><h3>${escapeHTML(item.name||`Deck ${i+1}`)}</h3>${item.note?`<div class="muted">${escapeHTML(item.note)}</div>`:""}<div class="deck-code" id="deck-${i}">${escapeHTML(item.code||"Code non renseigné")}</div>${item.code?`<button class="action" type="button" data-copy="deck-${i}">▣ Copier le code</button>`:""}${item.url?` ${linkButton(item.url,"Voir le deck ↗",true)}`:""}</article>`).join("");
   return heading("Les decks Hearthstone","LISTES & CODES")+(cards?`<div class="list">${cards}</div>`:empty("Les decks et leurs codes seront ajoutés ici. Tu pourras les copier en un clic."));
