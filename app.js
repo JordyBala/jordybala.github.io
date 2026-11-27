@@ -195,8 +195,36 @@ function renderDecks(){
     loadingNote+errorNote+(communityDecksLoading?"":communityCards?communityCards:empty(communityDecksError?"":"Aucun deck validé pour le moment. Sois le premier à partager le tien !"));
 }
 function renderTournaments(){
-  const cards=(data.tournaments||[]).map(item=>`<article class="card"><div class="row"><h3>${escapeHTML(item.name||"Tournoi")}</h3><span class="tag">${escapeHTML(item.date||"")}</span></div>${item.detail?`<p class="muted">${escapeHTML(item.detail)}</p>`:""}${item.url?`<p>${linkButton(item.url,"Informations / inscriptions ↗")}</p>`:""}</article>`).join("");
-  return heading("Tournois & affrontements","COMPÉTITION")+(cards?`<div class="list">${cards}</div>`:empty("Les prochains Battle Royale et tournois King of the Jungle seront annoncés ici."));
+  const poster="assets/koj-dodo-28-novembre.png";
+  const battlefy="https://battlefy.com/king-of-the-jungle-nouveau-format";
+  const koj=`<article class="card featured" style="overflow:hidden;display:grid;gap:16px">
+    <div style="text-align:center">
+      <span class="tag">LE TOURNOI ROYAL</span>
+      <h3 style="font-size:1.45em;margin:10px 0 4px;color:#f2cf72">King of the Jungle</h3>
+      <p class="muted" style="margin:0">Le règne de Dodo Ier commence !</p>
+    </div>
+    <a href="${poster}" target="_blank" rel="noopener noreferrer" aria-label="Agrandir l'affiche du King of the Jungle" style="display:block;text-align:center">
+      <img src="${poster}" alt="Affiche du King of the Jungle : Dodo Ier, samedi 28 novembre à 14 h" loading="lazy" style="display:block;width:100%;height:auto;max-width:620px;margin:0 auto;border-radius:14px;border:1px solid #d9a43b;box-shadow:0 8px 24px #0008">
+    </a>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px">
+      <div style="padding:12px;text-align:center;border:1px solid #c99435;border-radius:12px;background:#172943">
+        <div class="muted" style="font-size:.78em;letter-spacing:.08em">DATE</div>
+        <strong style="display:block;color:#f3d47c;margin-top:4px">Samedi 28 novembre</strong>
+      </div>
+      <div style="padding:12px;text-align:center;border:1px solid #c99435;border-radius:12px;background:#172943">
+        <div class="muted" style="font-size:.78em;letter-spacing:.08em">DÉBUT DU TOURNOI</div>
+        <strong style="display:block;color:#f3d47c;margin-top:4px">14 h 00</strong>
+      </div>
+      <div style="padding:12px;text-align:center;border:1px solid #c99435;border-radius:12px;background:#172943">
+        <div class="muted" style="font-size:.78em;letter-spacing:.08em">FORMAT</div>
+        <strong style="display:block;color:#f3d47c;margin-top:4px">Standard · BO3</strong>
+      </div>
+    </div>
+    <p class="muted" style="text-align:center;margin:0">Rejoignez l'arène et venez tenter de détrôner le roi ! Retrouvez les informations et les tournois sur Battlefy.</p>
+    <div style="text-align:center">${linkButton(battlefy,"👑 S'inscrire au King of the Jungle ↗")}</div>
+  </article>`;
+  return heading("King of the Jungle","TOURNOI HEARTHSTONE")+koj+
+    `<p class="muted" style="text-align:center;margin:18px 0 4px">🌿 Les prochaines annonces Battle Royale seront affichées ici dès leur publication.</p>`;
 }
 function renderKings(){
   const king=data.king||DEFAULT_DATA.king;
