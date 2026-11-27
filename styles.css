@@ -162,3 +162,26 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold2);outline-offs
   .content{padding-top:12px}.king-crown{width:54px;height:44px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* CADRE VEGETAL - OUISTI'TEAM */
+.shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/jungle-foliage-frame.png");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.shell > * {
+  position: relative;
+  z-index: 1;
+}
