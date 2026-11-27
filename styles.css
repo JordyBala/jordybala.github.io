@@ -196,7 +196,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold2);outline-offs
 
 /* Grand titre - Aventure Jungle */
 h1 {
-  font-family: 'Rye', serif;
+font-family: 'Adventure', sans-serif;
   font-weight: 400;
   color: #ffe49a;
   text-shadow:
@@ -209,7 +209,7 @@ h1 {
 }
 
 h2, .king-name {
-  font-family: 'Rye', serif;
+font-family: 'Adventure', sans-serif;
   font-weight: 400;
   color: #ffdf79;
   text-shadow:
@@ -221,7 +221,7 @@ h2, .king-name {
 
 /* Navigation jungle */
 .tab {
-  font-family: 'Alegreya Sans SC', sans-serif;
+font-family: 'Adventure', sans-serif;
   font-size: 13px;
   font-weight: 900;
   color: #fff0bd;
@@ -242,7 +242,7 @@ h2, .king-name {
 
 /* Titres des cartes - Jungle */
 h3 {
-  font-family: 'Alegreya Sans SC', sans-serif;
+font-family: 'Adventure', sans-serif;
   font-size: 16px;
   font-weight: 900;
   color: #fff2c2;
