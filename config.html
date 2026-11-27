@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Configuration — Ouisti’Team Companion</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+  <style>
+    body{padding:14px;background:#151a16}.admin{max-width:760px;margin:0 auto;padding:18px;background:linear-gradient(145deg,#253127,#171d19);border:1px solid #59694e;border-radius:13px;box-shadow:0 8px 24px #0006}
+    .admin-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}.admin-head img{width:58px;height:58px;object-fit:contain}.admin-head h1{font-size:23px}
+    .intro{color:var(--muted);font-size:12px;margin:0 0 15px}.group{padding:13px;margin:12px 0;border:1px solid var(--line);border-radius:10px;background:#ffffff05}.group h2{font-size:15px;margin:0 0 4px}.help{font-size:10px;color:var(--muted);margin:0 0 10px}
+    label{display:block;font-size:11px;font-weight:800;margin:10px 0 5px;color:var(--gold2)}
+    input,textarea{width:100%;background:#141a16;color:#fff;border:1px solid #596b58;border-radius:7px;padding:9px 10px;font:12px/1.5 system-ui;outline:none}
+    input:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 2px #e6c16c22}textarea{min-height:88px;resize:vertical}.short{min-height:64px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.savebar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:15px}
+    .save{border:1px solid #b19a5b;background:linear-gradient(135deg,#667345,#3d5037);color:#fff9e5;border-radius:8px;padding:11px 16px;font-weight:850;cursor:pointer}.save:hover{filter:brightness(1.12)}
+    .status{font-size:11px;color:#d7edb9}.footnote{font-size:10px;color:var(--muted);line-height:1.5;margin:13px 0 0}
+    @media(max-width:520px){.admin{padding:12px}.grid2{grid-template-columns:1fr}.admin-head h1{font-size:20px}}
+  </style>
+</head>
+<body>
+  <main class="admin">
+    <header class="admin-head"><img src="assets/logo.png" alt="Mascotte Ouisti’Team"><div><p class="eyebrow">KING OF THE JUNGLE</p><h1>Configuration du compagnon</h1><p class="sub">Les commandes de la jungle sont entre tes mains.</p></div></header>
+    <p class="intro">Renseigne les informations ci-dessous puis clique sur « Enregistrer sur Twitch ». Elles seront affichées aux visiteurs de ton extension. Tu peux laisser une rubrique vide si tu ne souhaites pas encore la publier.</p>
+
+    <section class="group">
+      <h2>👑 Temple des Kings</h2><p class="help">Le roi actuel et son règne.</p>
+      <div class="grid2"><div><label for="king">Roi actuel</label><input id="king" placeholder="Dodo Ier"></div><div><label for="wins">Nombre de victoires</label><input id="wins" placeholder="Ex. 3"></div></div>
+      <label for="kingNote">Petit texte sur le règne</label><input id="kingNote" placeholder="Longue vie au roi !">
+      <label for="hall">Anciens rois — une ligne : nom | palmarès</label><textarea id="hall" class="short" placeholder="Poulmorte Ier | Ancien roi — merci pour son long règne."></textarea>
+    </section>
+
+    <section class="group">
+      <h2>📅 Planning des lives</h2><p class="help">Une ligne par rendez-vous : jour | heure | événement | détail. Exemple : Samedi 28 novembre | 14h00 | King of the Jungle | Début du tournoi.</p>
+      <textarea id="schedule" placeholder="Vendredi | 18h30 | Live Hearthstone | Soirée ladder"></textarea>
+    </section>
+
+    <section class="group">
+      <h2>🎮 Lives de la communauté</h2><p class="help">Une ligne par chaîne : pseudo | URL Twitch | jeu | note.</p>
+      <textarea id="lives" placeholder="Jordybala | https://www.twitch.tv/jordybala | Hearthstone | La jungle est ouverte !"></textarea>
+    </section>
+
+    <section class="group">
+      <h2>🃏 Decks Hearthstone</h2><p class="help">Une ligne par deck : nom | code du deck | note | lien facultatif.</p>
+      <textarea id="decks" placeholder="Deck de Jordy | CODE_DU_DECK | Liste du tournoi | https://... "></textarea>
+    </section>
+
+    <section class="group">
+      <h2>🏆 Tournois KOJ & Battle Royale</h2><p class="help">Une ligne par événement : nom | date | détail | lien facultatif.</p>
+      <textarea id="tournaments" placeholder="Battle Royale | 28 novembre | Inscriptions sur Discord | https://..."></textarea>
+    </section>
+
+    <section class="group">
+      <h2>🌿 Infos & communauté</h2><p class="help">Le message d’accueil et les liens utiles.</p>
+      <label for="message">Message de la communauté</label><textarea id="message" class="short" placeholder="Bienvenue dans la Ouisti’Team !"></textarea>
+      <label for="discord">Lien Discord (facultatif)</label><input id="discord" type="url" placeholder="https://discord.gg/...">
+      <div class="grid2"><div><label for="twitch">Lien Twitch</label><input id="twitch" type="url" placeholder="https://www.twitch.tv/jordybala"></div><div><label for="tiktok">Lien TikTok (facultatif)</label><input id="tiktok" type="url" placeholder="https://www.tiktok.com/@..."></div></div>
+    </section>
+
+    <div class="savebar"><button class="save" id="save" type="button">Enregistrer sur Twitch</button><span class="status" id="status" role="status" aria-live="polite">En attente de Twitch…</span></div>
+    <p class="footnote">Les informations sont enregistrées dans le service de configuration Twitch de l’extension (limite : 5 Ko). Pense à vérifier l’affichage du panneau après chaque modification.</p>
+  </main>
+  <script src="config.js"></script>
+</body>
+</html>
